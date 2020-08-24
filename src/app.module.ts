@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FlowerModule } from './flower/flower.module';
-import { Flower } from './flower/flower';
+import { PlantsModule } from './plant/plants.module';
 
 @Module({
   imports: [
@@ -12,11 +11,12 @@ import { Flower } from './flower/flower';
       username: 'root',
       password: 'qwe123zxcasd',
       database: 'Plantswife',
-      entities: [Flower],
+      autoLoadEntities: true,
+      // entities: [Plant],
       synchronize: false,
       logging: 'all'
     }),
-    FlowerModule
+    PlantsModule
   ],
 })
 export class AppModule {}
