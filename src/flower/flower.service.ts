@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateFlowerDto, Flower } from './flower';
+import { Flower } from './flower';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
@@ -11,16 +11,19 @@ export class FlowerService {
   }
 
   update(flower: Flower): Promise<Flower> {
-    return this.flowerRepository.save(flower)
+    return this.flowerRepository.save(flower);
 
   }
 
   delete(id: string): Promise<DeleteResult> {
-    return this.flowerRepository.delete(id)
+    return this.flowerRepository.delete(id);
   }
 
   create(flower: Flower) {
-    return this.flowerRepository.create(flower)
+    if (!Number.isNaN(flower.id)) {
+    } else {
+      return this.flowerRepository.save(flower);
+    }
   }
 
   findAll(): Promise<Flower[]> {

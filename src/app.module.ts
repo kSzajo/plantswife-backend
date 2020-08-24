@@ -13,9 +13,10 @@ import { Flower } from './flower/flower';
       password: 'qwe123zxcasd',
       database: 'Plantswife',
       entities: [Flower],
-      synchronize: true,
+      synchronize: false,
+      logging: 'all'
     }),
-    FlowerModule,
+    FlowerModule
   ],
 })
 export class AppModule {}
