@@ -20,10 +20,7 @@ export class FlowerService {
   }
 
   create(flower: Flower) {
-    if (!Number.isNaN(flower.id)) {
-    } else {
-      return this.flowerRepository.save(flower);
-    }
+    return this.flowerRepository.save(flower);
   }
 
   findAll(): Promise<Flower[]> {
