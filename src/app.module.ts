@@ -13,7 +13,7 @@ import { PlantsModule } from './plant/plants.module';
       database: 'Plantswife',
       autoLoadEntities: true,
       // entities: [Plant],
-      synchronize: false,
+      synchronize: true,
       logging: 'all'
     }),
     PlantsModule
