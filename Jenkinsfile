@@ -11,6 +11,8 @@ pipeline {
     stage('copy') {
       steps {
          sh 'pwd'
+         sh 'whoami'
+         sh 'groups'
          sh 'HOME=/home/acetylen pm2 stop plantswife-backend || exit 0'
          sh 'rm -fr /home/acetylen/plantswife/production/backend/*'
          sh 'cp -r dist /home/acetylen/plantswife/production/backend'
