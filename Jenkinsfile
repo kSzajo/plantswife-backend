@@ -9,7 +9,8 @@ pipeline {
 
     stage('copy') {
       steps {
-    sh 'cp dist /home/acetylen/plantswife/production/backend'
+         sh 'pwd'
+         sh 'cp dist /home/acetylen/plantswife/production/backend'
       }
     }
 
