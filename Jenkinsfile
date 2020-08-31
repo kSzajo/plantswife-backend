@@ -21,8 +21,8 @@ pipeline {
     stage('run') {
       steps {
             try {
-                sh 'pm2 stop plantswife-backend || true'
-                sh 'pm2 delete plantswife-backend || true'
+                sh 'pm2 stop plantswife-backend'
+                sh 'pm2 delete plantswife-backend'
                 sh 'pm2 start /home/acetylen/plantswife/production/backend/dist/main.js --name plantswife-backend'
             } catch (err) {
                   echo err.getMessage()
