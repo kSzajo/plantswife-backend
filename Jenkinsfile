@@ -15,7 +15,7 @@ pipeline {
 
     stage('run') {
       steps {
-        sh 'pm2 /home/acetylen/plantswife/production/backend main.js'
+        sh 'pm2 /home/acetylen/plantswife/production/backend --name plantswife-backend main.js'
       }
     }
 
