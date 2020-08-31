@@ -22,7 +22,7 @@ pipeline {
       steps {
         sh 'pm2 stop plantswife-backend' || true
         sh 'pm2 delete plantswife-backend' || true
-        sh 'pm2 start /home/acetylen/plantswife/production/backend/dist/main.js --name plantswife-backend'
+        sh 'PORT=3069 pm2 start /home/acetylen/plantswife/production/backend/dist/main.js --name plantswife-backend'
       }
     }
 
