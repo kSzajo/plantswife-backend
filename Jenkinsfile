@@ -3,8 +3,6 @@ pipeline {
   stages {
     stage('build') {
       steps {
-        sh 'whoami'
-        sh 'npm install'
         sh 'npm run build'
       }
     }
