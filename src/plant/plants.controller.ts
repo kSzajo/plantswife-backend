@@ -3,7 +3,7 @@ import { PlantsService } from './plants.service';
 import { Plant } from './entity/plant.entity';
 import { CreatePlantDto } from './dto/plant.dto';
 
-@Controller('plant')
+@Controller('plants')
 export class PlantsController {
 
   constructor(private plantsService: PlantsService) {

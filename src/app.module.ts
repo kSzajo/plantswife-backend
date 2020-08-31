@@ -13,7 +13,7 @@ import { PlantsModule } from './plant/plants.module';
       database: 'Plantswife',
       autoLoadEntities: true,
       // entities: [Plant],
-      synchronize: true,
+      synchronize: process.env.SYNCHRONIZE === 'true' || false,
       logging: 'all'
     }),
     PlantsModule
