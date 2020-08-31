@@ -48,7 +48,6 @@ export class PlantsService {
     );
   }
 
-  // SELECT plant.id, name, notes, place, feeding.date FROM Plantswife.plant plant LEFT JOIN Plantswife.feeding feeding ON feeding.plantId = plant.id ;
   findOne(id: string): Promise<Plant> {
     if (Number.isInteger(+id)) {
       return this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate FROM Plantswife.plant plant
@@ -76,32 +75,3 @@ where id=${id}`);
   }
 
 }
-
-// SELECT id, name, notes, date, place  FROM Plantswife.plant plant
-// JOIN
-// (
-//   SELECT plantId, MAX(date) as date FROM Plantswife.feeding feed group by plantId
-// ) as most_recent
-// ON plant.id = most_recent.plantId
-// ;
-
-
-// SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate FROM Plantswife.plant plant
-// JOIN
-// (
-//   SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId
-// ) as most_recent1
-// ON plant.id = most_recent1.plantId
-//
-// JOIN
-// (
-//   SELECT plantId, MAX(date) as wateringDate FROM Plantswife.watering feed group by plantId
-// ) as most_recent2
-// ON plant.id = most_recent2.plantId
-//
-//
-// JOIN
-// (
-//   SELECT plantId, MAX(date) as spraingDate FROM Plantswife.spraing feed group by plantId
-// ) as most_recent3
-// ON plant.id = most_recent3.plantId
