@@ -7,9 +7,15 @@ pipeline {
       }
     }
 
+    stage('copy') {
+      steps {
+    sh 'cp dist /home/acetylen/plantswife/production/backend'
+      }
+    }
+
     stage('run') {
       steps {
-        sh 'npm run start'
+        sh 'pm2 /home/acetylen/plantswife/production/backend main.js'
       }
     }
 
