@@ -10,7 +10,7 @@ export class Watering {
 
 
   @Column({type: 'datetime'})
-  date: string
+  date: Date
 
   @ManyToOne(type => Plant, plant => plant.watering)
   plant: Plant;

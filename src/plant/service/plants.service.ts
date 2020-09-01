@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Plant } from './entity/plant.entity';
+import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { CreatePlantDto } from './dto/plant.dto';
-import { PlantMapper } from './dto/plant.mapper';
+import { CreatePlantDto } from '../dto/plant.dto';
+import { PlantMapper } from '../dto/plant.mapper';
 
 @Injectable()
 export class PlantsService {
 
-  constructor(@InjectRepository(Plant)
-              private plantRepository: Repository<Plant>) {
+  constructor(@InjectRepository(Plant) private plantRepository: Repository<Plant>) {
   }
 
   update(plant: Plant): Promise<Plant> {
@@ -20,7 +19,7 @@ export class PlantsService {
     return this.plantRepository.delete(id);
   }
 
-  create(plantDto: CreatePlantDto) {
+  create(plantDto: CreatePlantDto): Promise<Plant> {
     return this.plantRepository.save(PlantMapper.fromDto(plantDto));
   }
 
