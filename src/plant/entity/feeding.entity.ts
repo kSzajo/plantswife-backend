@@ -9,7 +9,7 @@ export class Feeding {
   id: number;
 
   @Column({type: 'datetime'})
-  date: string
+  date: Date
 
   @ManyToOne(type => Plant, plant => plant.feeding)
   plant: Plant;

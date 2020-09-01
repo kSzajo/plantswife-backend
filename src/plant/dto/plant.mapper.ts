@@ -23,10 +23,6 @@ export class PlantMapper {
     }
     console.log(plant)
 
-    return plant as Partial<Plant>
-
-
-
-
+    return plant as unknown as Partial<Plant>;
   }
 }
