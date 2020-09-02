@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Spraing } from './spraing.entity';
 import { Watering } from './watering.entity';
 import { Feeding } from './feeding.entity';
+import { ProcessInterval } from '../dto/processInterval.enum';
 
 @Entity()
 export class Plant {
@@ -10,31 +11,52 @@ export class Plant {
   id: number;
 
   @Column()
-  name: string
+  name: string;
 
   @Column()
-  notes: string
+  notes: string;
 
   @Column()
-  place: string
+  place: string;
 
-  @OneToMany(type => Spraing, spraing => spraing.plant, {cascade: true, })
-  spraing: Spraing[]
+  @OneToMany(() => Spraing, spraing => spraing.plant, { cascade: true })
+  spraing: Spraing[];
 
-  @OneToMany(type => Watering, watering => watering.plant, {cascade: true, })
-  watering: Watering[]
+  @OneToMany(() => Watering, watering => watering.plant, { cascade: true })
+  watering: Watering[];
 
-  @OneToMany(type => Feeding, feeding => feeding.plant, {cascade: true, })
-  feeding: Feeding[]
+  @OneToMany(() => Feeding, feeding => feeding.plant, { cascade: true })
+  feeding: Feeding[];
 
-  @Column()
-  spraingInterval: string
+  @Column({ type: 'datetime' })
+  nextSpraing: Date;
 
-  @Column()
-  feedingInterval: string
+  @Column({ type: 'datetime' })
+  nextFeeding: Date;
 
-  @Column()
-  wateringInterval: string
+  @Column({ type: 'datetime' })
+  nextWatering: Date;
+
+  @Column({
+    type: 'enum',
+    enum: ProcessInterval,
+    default: ProcessInterval.EVERYDAY,
+  })
+  spraingInterval: ProcessInterval;
+
+  @Column({
+    type: 'enum',
+    enum: ProcessInterval,
+    default: ProcessInterval.EVERYDAY,
+  })
+  feedingInterval: ProcessInterval;
+
+  @Column({
+    type: 'enum',
+    enum: ProcessInterval,
+    default: ProcessInterval.EVERYDAY,
+  })
+  wateringInterval: ProcessInterval;
 
 }
 

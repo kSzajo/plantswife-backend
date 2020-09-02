@@ -10,6 +10,6 @@ export class Spraing {
   @Column({type: 'datetime'})
   date: Date
 
-  @ManyToOne(type => Plant, plant => plant.spraing)
+  @ManyToOne(() => Plant, plant => plant.spraing)
   plant: Plant;
 }

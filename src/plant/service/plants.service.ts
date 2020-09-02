@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
-import { CreatePlantDto } from '../dto/plant.dto';
+import { PlantDto } from '../dto/plant.dto';
 import { PlantMapper } from '../dto/plant.mapper';
 
 @Injectable()
@@ -19,13 +19,13 @@ export class PlantsService {
     return this.plantRepository.delete(id);
   }
 
-  create(plantDto: CreatePlantDto): Promise<Plant> {
-    return this.plantRepository.save(PlantMapper.fromDto(plantDto));
+  create(plantDto: PlantDto): Promise<Plant> {
+    return this.plantRepository.save(PlantMapper.fromDTOToEntity(plantDto));
   }
 
-  findAll(): Promise<Plant[]> {
-    return this.plantRepository.query(
-      'SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate FROM Plantswife.plant plant\n' +
+  async findAll(): Promise<PlantDto[]> {
+    const result: any[] = await this.plantRepository.query(
+      'SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant\n' +
       'JOIN\n' +
       '(\n' +
       '  SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId\n' +
@@ -45,6 +45,8 @@ export class PlantsService {
       ') as most_recent3\n' +
       'ON plant.id = most_recent3.plantId\n',
     );
+
+    return result.map(record => PlantMapper.fromQueryResultToDTO(record));
   }
 
   findOne(id: string): Promise<Plant> {

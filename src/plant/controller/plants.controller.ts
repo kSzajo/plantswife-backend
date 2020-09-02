@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
-import { CreatePlantDto } from '../dto/plant.dto';
+import { PlantDto } from '../dto/plant.dto';
 import { PlantsService } from '../service/plants.service';
 import { DeleteResult } from 'typeorm';
 
@@ -11,7 +11,7 @@ export class PlantsController {
   }
 
   @Get()
-  findAll(): Promise<Plant[]> {
+  findAll(): Promise<PlantDto[]> {
     return this.plantsService.findAll();
   }
 
@@ -21,7 +21,7 @@ export class PlantsController {
   }
 
   @Post()
-  create(@Body() createPlantDto: CreatePlantDto): Promise<Plant> {
+  create(@Body() createPlantDto: PlantDto): Promise<Plant> {
     return this.plantsService.create(createPlantDto);
   }
 

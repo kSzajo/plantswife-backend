@@ -1,17 +1,18 @@
-export class CreatePlantDto {
-  name: string
-  notes: string
-  place: string
-  watering: PlantProcess
-  spraing: PlantProcess
-  feeding: PlantProcess
+import { ProcessInterval } from './processInterval.enum';
+
+export class PlantDto {
+  name: string;
+  notes: string;
+  place: string;
+  watering: PlantProcess;
+  spraing: PlantProcess;
+  feeding: PlantProcess;
 }
 
-
-
 export class PlantProcess {
-  interval: string
-  lastTimeProcessed: string
+  interval: ProcessInterval;
+  lastTimeProcessed: Date;
+  nextTimeProcessed: Date;
 }
 
 
