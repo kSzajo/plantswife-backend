@@ -3,9 +3,11 @@ import { Plant } from '../entity/plant.entity';
 
 export class PlantMapper {
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public static fromQueryResultToDTO(plant: any): PlantDto {
 
     return {
+      id: plant.id,
       name: plant.name,
       notes: plant.notes,
       place: plant.place,
