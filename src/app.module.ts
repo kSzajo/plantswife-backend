@@ -10,6 +10,7 @@ import { PlantsModule } from './plant/plants.module';
       port: 3306,
       username: 'root',
       password: 'qwe123zxcasd',
+      dropSchema: process.env.CREATE_TABLES === 'true',
       database: 'Plantswife',
       autoLoadEntities: true,
       // entities: [Plant],
