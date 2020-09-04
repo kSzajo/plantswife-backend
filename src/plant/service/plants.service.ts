@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
@@ -51,7 +51,7 @@ export class PlantsService {
 
   async findOne(id: string): Promise<PlantDto> {
     if (Number.isInteger(+id)) {
-      const record = await this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate,  nextSpraing, nextFeeding, nextWatering  FROM Plantswife.plant plant
+      const record: Array<any> = await this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate,  nextSpraing, nextFeeding, nextWatering  FROM Plantswife.plant plant
 JOIN
 (
   SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId
@@ -71,10 +71,12 @@ JOIN
 ) as most_recent3
 ON plant.id = most_recent3.plantId
 where id=${id}`);
-      if ((record as Array<any>).length > 1) {
+      if (record.length > 1) {
         throw new Error('Find 1 should return only 1 record');
       }
-      // console.log(record)
+      if (record.length === 0) {
+        throw new NotFoundException('not found plant with id: ' + id);
+      }
       return PlantMapper.fromQueryResultToDTO(record[0]);
     }
 
