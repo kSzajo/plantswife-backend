@@ -16,7 +16,7 @@ export class PlantsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<Plant> {
+  findOne(@Param('id') id: string): Promise<PlantDto> {
     return this.plantsService.findOne(id);
   }
 

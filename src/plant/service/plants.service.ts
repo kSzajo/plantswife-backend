@@ -49,9 +49,9 @@ export class PlantsService {
     return result.map(record => PlantMapper.fromQueryResultToDTO(record));
   }
 
-  findOne(id: string): Promise<Plant> {
+  async findOne(id: string): Promise<PlantDto> {
     if (Number.isInteger(+id)) {
-      return this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate FROM Plantswife.plant plant
+      const record = await this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate,  nextSpraing, nextFeeding, nextWatering  FROM Plantswife.plant plant
 JOIN
 (
   SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId
@@ -71,8 +71,14 @@ JOIN
 ) as most_recent3
 ON plant.id = most_recent3.plantId
 where id=${id}`);
-
+      if ((record as Array<any>).length > 1) {
+        throw new Error('Find 1 should return only 1 record');
+      }
+      // console.log(record)
+      return PlantMapper.fromQueryResultToDTO(record[0]);
     }
+
+
   }
 
 }
