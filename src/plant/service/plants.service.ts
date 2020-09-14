@@ -15,7 +15,7 @@ export class PlantsService {
     return this.plantRepository.save(plant);
   }
 
-  delete(id: string): Promise<DeleteResult> {
+  delete(id: number): Promise<DeleteResult> {
     return this.plantRepository.delete(id);
   }
 
@@ -49,7 +49,7 @@ export class PlantsService {
     return result.map(record => PlantMapper.fromQueryResultToDTO(record));
   }
 
-  async findOne(id: string): Promise<PlantDto> {
+  async findOne(id: number): Promise<PlantDto> {
     if (Number.isInteger(+id)) {
       const record: Array<any> = await this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate,  nextSpraing, nextFeeding, nextWatering  FROM Plantswife.plant plant
 JOIN

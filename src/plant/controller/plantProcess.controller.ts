@@ -1,4 +1,4 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { PlantProcessService } from '../service/plantProcess.service';
 import { Watering } from '../entity/watering.entity';
 import { Spraing } from '../entity/spraing.entity';
@@ -10,17 +10,17 @@ export class PlantProcessController {
   }
 
   @Post('watering')
-  watering(@Param('id') id: number): Promise<Watering> {
+  watering(@Param('id', ParseIntPipe) id: number): Promise<Watering> {
     return this.plantService.watering(id);
   }
 
   @Post('spraing')
-  spraing(@Param('id') id: number): Promise<Spraing> {
+  spraing(@Param('id', ParseIntPipe) id: number): Promise<Spraing> {
     return this.plantService.spraing(id);
   }
 
   @Post('feeding')
-  feeding(@Param('id') id: number): Promise<Feeding> {
+  feeding(@Param('id', ParseIntPipe) id: number): Promise<Feeding> {
     return this.plantService.feeding(id);
   }
 }
