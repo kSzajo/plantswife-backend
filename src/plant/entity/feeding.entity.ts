@@ -11,6 +11,6 @@ export class Feeding {
   @Column({type: 'datetime'})
   date: Date
 
-  @ManyToOne(() => Plant, plant => plant.feeding)
+  @ManyToOne(() => Plant, plant => plant.feeding, { onDelete: 'CASCADE' })
   plant: Plant;
 }

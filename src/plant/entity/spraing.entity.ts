@@ -10,6 +10,6 @@ export class Spraing {
   @Column({type: 'datetime'})
   date: Date
 
-  @ManyToOne(() => Plant, plant => plant.spraing)
+  @ManyToOne(() => Plant, plant => plant.spraing, { onDelete: 'CASCADE' })
   plant: Plant;
 }
