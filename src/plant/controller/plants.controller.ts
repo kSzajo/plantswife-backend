@@ -25,8 +25,9 @@ export class PlantsController {
   }
 
   @Put(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() plant: Plant): Promise<Plant> {
-    return this.plantsService.update(plant);
+  update(@Param('id', ParseIntPipe) id: number, @Body() plant: PlantDto): Promise<any> {
+    // todo maybe should use validator ad in POST request
+    return this.plantsService.update(id, plant);
   }
 
   @Delete(':id')

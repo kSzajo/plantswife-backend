@@ -1,18 +1,46 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Connection, DeleteResult, Repository } from 'typeorm';
 import { PlantDto } from '../dto/plant.dto';
-import { PlantMapper } from '../dto/plant.mapper';
+import { DestructuredPlantDTO, PlantMapper } from '../dto/plant.mapper';
+import { Feeding } from '../entity/feeding.entity';
+import { Watering } from '../entity/watering.entity';
+import { Spraing } from '../entity/spraing.entity';
 
 @Injectable()
 export class PlantsService {
 
-  constructor(@InjectRepository(Plant) private plantRepository: Repository<Plant>) {
+  constructor(@InjectRepository(Plant) private plantRepository: Repository<Plant>,
+              private connection: Connection) {
   }
 
-  update(plant: Plant): Promise<Plant> {
-    return this.plantRepository.save(plant);
+  async update(id: number, plantDto: PlantDto): Promise<any> {
+    const destructuredPlantDTO: DestructuredPlantDTO = PlantMapper.fromDTOToEntities(id, plantDto);
+
+    const plantToUpdate: Partial<Plant> = destructuredPlantDTO.plant;
+    const wateringUpdate: Partial<Watering> = destructuredPlantDTO.watering;
+    const feedingUpdate: Partial<Feeding> = destructuredPlantDTO.feeding;
+    const spraingUpdate: Partial<Spraing> = destructuredPlantDTO.spraing;
+
+    const queryRunner = this.connection.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      await queryRunner.manager.save(plantToUpdate);
+      wateringUpdate.date && await queryRunner.manager.save(wateringUpdate);
+      spraingUpdate.date && await queryRunner.manager.save(spraingUpdate);
+      feedingUpdate.date && await queryRunner.manager.save(feedingUpdate);
+      await queryRunner.commitTransaction();
+    } catch (err) {
+      console.log(err);
+      await queryRunner.rollbackTransaction();
+      throw new BadRequestException('Received malformed data');
+    } finally {
+      await queryRunner.release();
+    }
+    return 'success';
   }
 
   async delete(id: number): Promise<{ deleted: number }> {
@@ -26,6 +54,7 @@ export class PlantsService {
   }
 
   async findAll(): Promise<PlantDto[]> {
+    // bug? plants in DB must have at least 1 record of each process (watering/spraing/feeding)
     const result: any[] = await this.plantRepository.query(
       'SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant\n' +
       'JOIN\n' +

@@ -1,5 +1,5 @@
 import { ProcessInterval } from './processInterval.enum';
-import { IsDateString, IsEnum, IsString, ValidateNested } from 'class-validator';
+import { IsDateString, IsDefined, IsEnum, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class PlantProcess {
@@ -20,12 +20,15 @@ export class PlantDto {
   place: string;
   @ValidateNested()
   @Type(() => PlantProcess)
+  @IsDefined()
   watering: PlantProcess;
   @ValidateNested()
   @Type(() => PlantProcess)
+  @IsDefined()
   spraing: PlantProcess;
   @ValidateNested()
   @Type(() => PlantProcess)
+  @IsDefined()
   feeding: PlantProcess;
 }
 
