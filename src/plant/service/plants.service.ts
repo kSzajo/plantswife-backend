@@ -15,8 +15,10 @@ export class PlantsService {
     return this.plantRepository.save(plant);
   }
 
-  delete(id: number): Promise<DeleteResult> {
-    return this.plantRepository.delete(id);
+  async delete(id: number): Promise<{ deleted: number }> {
+    const result: DeleteResult = await this.plantRepository.delete(id);
+    return { deleted: result.affected };
+
   }
 
   create(plantDto: PlantDto): Promise<Plant> {

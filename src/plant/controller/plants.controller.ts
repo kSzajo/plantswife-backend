@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Validati
 import { Plant } from '../entity/plant.entity';
 import { PlantDto } from '../dto/plant.dto';
 import { PlantsService } from '../service/plants.service';
-import { DeleteResult } from 'typeorm';
 
 @Controller('plants')
 export class PlantsController {
@@ -31,7 +30,7 @@ export class PlantsController {
   }
 
   @Delete(':id')
-  delete(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
+  delete(@Param('id', ParseIntPipe) id: number): Promise<{ deleted: number }> {
     return this.plantsService.delete(id);
   }
 
