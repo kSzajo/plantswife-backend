@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PlantsModule } from './plant/plants.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -15,9 +17,11 @@ import { PlantsModule } from './plant/plants.module';
       autoLoadEntities: true,
       // entities: [Plant],
       synchronize: process.env.CREATE_TABLES === 'true' || false,
-      logging: 'all'
+      logging: 'all',
     }),
-    PlantsModule
+    PlantsModule,
+    AuthModule,
+    UsersModule,
   ],
 })
 export class AppModule {}
