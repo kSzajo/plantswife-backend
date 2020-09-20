@@ -12,10 +12,10 @@ import { JwtAuthGuard } from './strategy/jwt-auth.guard';
 
 @Module({
   imports: [UsersModule,
-    PassportModule,
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '24h' },
     })],
   providers: [AuthService, LocalStrategy, LocalAuthGuard, JwtStrategy, JwtAuthGuard],
   controllers: [AuthController],

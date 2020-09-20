@@ -6,7 +6,7 @@ import { Feeding } from './entity/feeding.entity';
 import { Watering } from './entity/watering.entity';
 import { PlantProcessService } from './service/plantProcess.service';
 import { PlantsService } from './service/plants.service';
-import { PlantProcessController } from './controller/plantProcess.controller';
+import { PlantProcessController } from './controller/plant-process.controller';
 import { PlantsController } from './controller/plants.controller';
 
 @Module({
