@@ -1,5 +1,5 @@
 import { Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { PlantProcessService } from '../service/plantProcess.service';
+import { PlantProcessService } from '../service/plant-process.service';
 import { Watering } from '../entity/watering.entity';
 import { Spraing } from '../entity/spraing.entity';
 import { Feeding } from '../entity/feeding.entity';

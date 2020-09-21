@@ -17,7 +17,7 @@ import { UsersModule } from './users/users.module';
       autoLoadEntities: true,
       // entities: [Plant],
       synchronize: process.env.CREATE_TABLES === 'true' || false,
-      logging: 'all',
+      // logging: 'all',
     }),
     PlantsModule,
     AuthModule,
