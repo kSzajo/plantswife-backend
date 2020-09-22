@@ -16,6 +16,7 @@ import { PlantsController } from './controller/plants.controller';
     Spraing,
     Watering,
   ]),
+    // PassportModule.register({defaultStrategy: 'jwt'})
   ],
   providers: [
     PlantsService,

@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { UsersService } from '../../users/users.service';
+import { UsersService } from '../../users/service/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../../users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '../../users/user.entity';
+import { User } from '../../users/entity/user.entity';
 import { LoginUserDto } from '../../users/dto/login-user.dto';
 
 @Injectable()
@@ -13,12 +13,11 @@ export class AuthService {
               private jwtService: JwtService) {
   }
 
-  async retrieveUser(loginUserDto: LoginUserDto): Promise<any> {
+  async validateUser(loginUserDto: LoginUserDto): Promise<any> {
     const user = await this.usersService.getByEmail(loginUserDto.email);
     if (!user) {
       throw new NotFoundException('Username or password is incorrect');
     }
-
     const userEnteredCorrectPassword: boolean = await AuthService.verifyPassword(loginUserDto.password, user.password);
     if (userEnteredCorrectPassword) {
       // we get rid of password field from object this way
@@ -29,8 +28,8 @@ export class AuthService {
     return null;
   }
 
-  async login(user: any): Promise<{ access_token: string }> {
-    const payload = { username: user.username, sub: user.userId };
+  async login(user: LoginUserDto): Promise<{ access_token: string }> {
+    const payload = { ...user };
     return {
       access_token: this.jwtService.sign(payload),
     };

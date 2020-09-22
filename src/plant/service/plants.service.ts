@@ -49,8 +49,12 @@ export class PlantsService {
 
   }
 
-  create(plantDto: PlantDto): Promise<Plant> {
-    return this.plantRepository.save(PlantMapper.fromDTOToEntity(plantDto));
+  create(plantDto: PlantDto, user): Promise<Plant> {
+    const toSave = {
+      ...PlantMapper.fromDTOToEntity(plantDto),
+      user: user,
+    };
+    return this.plantRepository.save(toSave);
   }
 
   async findAll(): Promise<PlantDto[]> {

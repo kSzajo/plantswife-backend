@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Spraing } from './spraing.entity';
 import { Watering } from './watering.entity';
 import { Feeding } from './feeding.entity';
 import { ProcessInterval } from '../dto/processInterval.enum';
+import { User } from '../../users/entity/user.entity';
 
 @Entity()
 export class Plant {
@@ -58,6 +59,9 @@ export class Plant {
   })
   wateringInterval: ProcessInterval;
 
+  @OneToOne(() => User)
+  @JoinColumn()
+  user: User;
 }
 
 
