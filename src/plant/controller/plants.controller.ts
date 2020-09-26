@@ -17,6 +17,7 @@ import { PlantDto } from '../dto/plant.dto';
 import { PlantsService } from '../service/plants.service';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { IdentityGuard } from '../guard/identity.guard';
+import { User as UserEntity } from '../../users/entity/user.entity';
 
 export const User = createParamDecorator((data, req: ExecutionContext) => {
   const request = req.switchToHttp().getRequest();
@@ -31,8 +32,8 @@ export class PlantsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll(@User() user: { email: string, name: string }): Promise<PlantDto[]> {
-    return this.plantsService.findAll();
+  findAll(@User() user: UserEntity): Promise<PlantDto[]> {
+    return this.plantsService.findAll(user);
   }
 
   @Get(':id')
@@ -43,7 +44,7 @@ export class PlantsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  create(@Body(new ValidationPipe()) createPlantDto: PlantDto, @User() user: { email: string, name: string }): Promise<Plant> {
+  create(@Body(new ValidationPipe()) createPlantDto: PlantDto, @User() user: UserEntity): Promise<Plant> {
     return this.plantsService.create(createPlantDto, user);
   }
 

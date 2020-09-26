@@ -7,6 +7,7 @@ import { DestructuredPlantDTO, PlantMapper } from '../dto/plant.mapper';
 import { Feeding } from '../entity/feeding.entity';
 import { Watering } from '../entity/watering.entity';
 import { Spraing } from '../entity/spraing.entity';
+import { User } from '../../users/entity/user.entity';
 
 @Injectable()
 export class PlantsService {
@@ -49,7 +50,7 @@ export class PlantsService {
 
   }
 
-  create(plantDto: PlantDto, user): Promise<Plant> {
+  create(plantDto: PlantDto, user: User): Promise<Plant> {
     const toSave = {
       ...PlantMapper.fromDTOToEntity(plantDto),
       user: user,
@@ -57,7 +58,7 @@ export class PlantsService {
     return this.plantRepository.save(toSave);
   }
 
-  async findAll(): Promise<PlantDto[]> {
+  async findAll(user: User): Promise<PlantDto[]> {
     // bug? plants in DB must have at least 1 record of each process (watering/spraing/feeding)
     const result: any[] = await this.plantRepository.query(
       'SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant\n' +
@@ -118,4 +119,10 @@ where id=${id}`);
 
   }
 
+  async isPlantOwner(param: { plantId: number; userId: string }): Promise<boolean> {
+    const foundPlant: Plant = await this.plantRepository.findOne(param.plantId, { relations: ['user'] });
+    console.log('found plant', foundPlant);
+    return foundPlant?.user?.id === param.userId;
+  }
 }
+
