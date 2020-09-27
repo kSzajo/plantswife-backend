@@ -62,27 +62,31 @@ export class PlantsService {
   }
 
   async findAll(user: User): Promise<PlantDto[]> {
+    const userId = Number(user.id);
+    if (Number.isNaN(userId)) {
+      throw new BadRequestException('User id is not number!');
+    }
+
     // bug? plants in DB must have at least 1 record of each process (watering/spraing/feeding)
     const result: any[] = await this.plantRepository.query(
-      'SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant\n' +
-      'JOIN\n' +
-      '(\n' +
-      '  SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId\n' +
-      ') as most_recent1\n' +
-      'ON plant.id = most_recent1.plantId\n' +
-      '\n' +
-      'JOIN\n' +
-      '(\n' +
-      '  SELECT plantId, MAX(date) as wateringDate FROM Plantswife.watering feed group by plantId\n' +
-      ') as most_recent2\n' +
-      'ON plant.id = most_recent2.plantId\n' +
-      '\n' +
-      '\n' +
-      'JOIN\n' +
-      '(\n' +
-      '  SELECT plantId, MAX(date) as spraingDate FROM Plantswife.spraing feed group by plantId\n' +
-      ') as most_recent3\n' +
-      'ON plant.id = most_recent3.plantId\n',
+      `SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant
+      left JOIN
+    (
+      SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding group by plantId
+  ) as most_recent1
+    ON plant.id = most_recent1.plantId
+
+    left JOIN
+    (
+      SELECT plantId, MAX(date) as wateringDate FROM Plantswife.watering feed group by plantId
+  ) as most_recent2
+    ON plant.id = most_recent2.plantId
+    left JOIN
+    (
+      SELECT plantId, MAX(date) as spraingDate FROM Plantswife.spraing feed group by plantId
+  ) as most_recent3
+    ON plant.id = most_recent3.plantId
+          where plant.userId = ` + userId,
     );
 
     return result.map(record => PlantMapper.fromQueryResultToDTO(record));
