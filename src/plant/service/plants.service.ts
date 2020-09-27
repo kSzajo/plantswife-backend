@@ -19,8 +19,8 @@ export class PlantsService {
               private connection: Connection) {
   }
 
-  async update(id: number, plantDto: PlantDto): Promise<any> {
-    const destructuredPlantDTO: DestructuredPlantDTO = PlantMapper.fromDTOToEntities(id, plantDto);
+  async update(plantId: number, plantDto: PlantDto): Promise<any> {
+    const destructuredPlantDTO: DestructuredPlantDTO = PlantMapper.fromDTOToEntities(plantId, plantDto);
 
     const plantToUpdate: Partial<Plant> = destructuredPlantDTO.plant;
     const wateringUpdate: Partial<Watering> = destructuredPlantDTO.watering;
@@ -61,35 +61,51 @@ export class PlantsService {
     return this.plantRepository.save(toSave);
   }
 
-  async findAll(user: User): Promise<PlantDto[]> {
+  async findAll(user: User): Promise<any> {
     const userId = Number(user.id);
     if (Number.isNaN(userId)) {
       throw new BadRequestException('User id is not number!');
     }
 
-    // bug? plants in DB must have at least 1 record of each process (watering/spraing/feeding)
-    const result: any[] = await this.plantRepository.query(
-      `SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate, nextSpraing, nextFeeding, nextWatering FROM Plantswife.plant plant
-      left JOIN
-    (
-      SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding group by plantId
-  ) as most_recent1
-    ON plant.id = most_recent1.plantId
+    const allUserPlants = await this.plantRepository.createQueryBuilder('plant')
+      .where('plant.userId = :id', { id: user.id })
+      .leftJoinAndSelect(
+        qb =>
+          qb.from(Watering, 'watering')
+            .select('MAX(date)', 'wateringDate')
+            .addSelect('plantId', 'wateringPlantId')
+            .groupBy('wateringPlantId'), 'mostRecent', 'wateringPlantId = plant.id',
+      )
+      .leftJoinAndSelect(
+        qb =>
+          qb.from(Spraing, 'spraing')
+            .select('MAX(date)', 'spraingDate')
+            .addSelect('plantId', 'spraingPlantId')
+            .groupBy('spraingPlantId'), 'mostRecentSpraing', 'spraingPlantId = plant.id',
+      )
+      .leftJoinAndSelect(
+        qb =>
+          qb.from(Spraing, 'feeding')
+            .select('MAX(date)', 'feedingDate')
+            .addSelect('plantId', 'feedingPlantId')
+            .groupBy('feedingPlantId'), 'mostRecentFeeding', 'feedingPlantId = plant.id',
+      )
+      .getRawMany();
 
-    left JOIN
-    (
-      SELECT plantId, MAX(date) as wateringDate FROM Plantswife.watering feed group by plantId
-  ) as most_recent2
-    ON plant.id = most_recent2.plantId
-    left JOIN
-    (
-      SELECT plantId, MAX(date) as spraingDate FROM Plantswife.spraing feed group by plantId
-  ) as most_recent3
-    ON plant.id = most_recent3.plantId
-          where plant.userId = ` + userId,
-    );
+    const removeLowerDashFromKeys = (obj) => {
+      const withRemovedLowerDash = {};
+      for (const [key, value] of Object.entries(obj)) {
+        const keySplit = key.split('_');
+        if (keySplit.length == 2) {
+          withRemovedLowerDash[keySplit[1]] = value;
+        } else {
+          withRemovedLowerDash[key] = value;
+        }
+      }
+      return withRemovedLowerDash;
+    };
 
-    return result.map(record => PlantMapper.fromQueryResultToDTO(record));
+    return allUserPlants.map(record => PlantMapper.fromQueryResultToDTO(removeLowerDashFromKeys(record)));
   }
 
   async findOne(id: number): Promise<PlantDto> {
