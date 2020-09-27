@@ -18,7 +18,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('Username or password is incorrect');
     }
-    const userEnteredCorrectPassword: boolean = await AuthService.verifyPassword(loginUserDto.password, user.password);
+    const userEnteredCorrectPassword: boolean = await this.verifyPassword(loginUserDto.password, user.password);
     if (userEnteredCorrectPassword) {
       // we get rid of password field from object this way
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -54,7 +54,7 @@ export class AuthService {
     }
   }
 
-  private static async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
+  public async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(
       plainTextPassword,
       hashedPassword,
