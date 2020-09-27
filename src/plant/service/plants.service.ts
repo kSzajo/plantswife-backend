@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Connection, DeleteResult, Repository } from 'typeorm';
+import { Connection, DeleteResult, FindManyOptions, Repository } from 'typeorm';
 import { PlantDto } from '../dto/plant.dto';
 import { DestructuredPlantDTO, PlantMapper } from '../dto/plant.mapper';
 import { Feeding } from '../entity/feeding.entity';
@@ -13,6 +13,9 @@ import { User } from '../../users/entity/user.entity';
 export class PlantsService {
 
   constructor(@InjectRepository(Plant) private plantRepository: Repository<Plant>,
+              @InjectRepository(Watering) private wateringRepository: Repository<Watering>,
+              @InjectRepository(Spraing) private spraingRepository: Repository<Spraing>,
+              @InjectRepository(Feeding) private feedingRepository: Repository<Feeding>,
               private connection: Connection) {
   }
 
@@ -86,42 +89,36 @@ export class PlantsService {
   }
 
   async findOne(id: number): Promise<PlantDto> {
-    if (Number.isInteger(+id)) {
-      const record: Array<any> = await this.plantRepository.query(`SELECT id, name, notes, place, spraingInterval, wateringInterval, feedingInterval, feedingDate, spraingDate, wateringDate,  nextSpraing, nextFeeding, nextWatering  FROM Plantswife.plant plant
-JOIN
-(
-  SELECT plantId, MAX(date) as feedingDate FROM Plantswife.feeding feed group by plantId
-) as most_recent1
-ON plant.id = most_recent1.plantId
+    const foundPlant = await this.plantRepository.findOne({ id });
 
-JOIN
-(
-  SELECT plantId, MAX(date) as wateringDate FROM Plantswife.watering feed group by plantId
-) as most_recent2
-ON plant.id = most_recent2.plantId
+    const getByLatestDate: FindManyOptions<Watering | Spraing | Feeding> = {
+      select: ['date'],
+      where: {
+        plant: foundPlant,
+      },
+      order: {
+        date: 'DESC',
+      },
+      take: 1,
+    };
 
+    const latestWatering = await this.wateringRepository.find(getByLatestDate);
+    const latestSpraing = await this.spraingRepository.find(getByLatestDate);
+    const latestFeeding = await this.feedingRepository.find(getByLatestDate);
 
-JOIN
-(
-  SELECT plantId, MAX(date) as spraingDate FROM Plantswife.spraing feed group by plantId
-) as most_recent3
-ON plant.id = most_recent3.plantId
-where id=${id}`);
-      if (record.length > 1) {
-        throw new Error('Find 1 should return only 1 record');
-      }
-      if (record.length === 0) {
-        throw new NotFoundException('not found plant with id: ' + id);
-      }
-      return PlantMapper.fromQueryResultToDTO(record[0]);
-    }
+    const result = {
+      ...foundPlant,
+      spraingDate: latestSpraing[0]['date'],
+      feedingDate: latestFeeding[0]['date'],
+      wateringDate: latestWatering[0]['date'],
+    };
 
+    return PlantMapper.fromQueryResultToDTO(result);
 
   }
 
   async isPlantOwner(param: { plantId: number; userId: string }): Promise<boolean> {
     const foundPlant: Plant = await this.plantRepository.findOne(param.plantId, { relations: ['user'] });
-    console.log('found plant', foundPlant);
     return foundPlant?.user?.id === param.userId;
   }
 }
