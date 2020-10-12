@@ -81,12 +81,51 @@ describe('AuthService', () => {
     it('should return access_token', async () => {
       jest.spyOn(jwtService, 'sign').mockImplementation(() => 'yesThisIsToken');
       await expect(authService.login({
-        password: 'doNotReturnThis!',
+        password: 'p4ssw04d!',
         name: 'name',
       } as User as any)).resolves.toEqual({ access_token: 'yesThisIsToken' });
       expect(jwtService.sign).toHaveBeenCalled();
       expect(jwtService.sign).toHaveBeenCalledWith({
-        password: 'doNotReturnThis!',
+        password: 'p4ssw04d!',
+        name: 'name',
+      });
+    });
+
+  });
+
+  describe('register', () => {
+    it('should throw error if email already taken', async () => {
+      jest.spyOn(userService, 'getByEmail').mockImplementation(() => {
+        return Promise.resolve({ email: 'email@email.com', password: 'encryptedPassword' } as User);
+      });
+
+      jest.spyOn(jwtService, 'sign').mockImplementation(() => 'yesThisIsToken');
+      await expect(authService.register({
+        email: 'bb@cc.dd',
+        password: 'p4ssw04d!',
+        name: 'name',
+      } as User as any)).rejects.toThrow('Email already taken');
+    });
+
+    it('should call user service to create new user and respond without password', async () => {
+      jest.spyOn(userService, 'getByEmail').mockImplementation(() => {
+        return Promise.resolve(undefined);
+      });
+
+      jest.spyOn(userService, 'create').mockImplementation(() => {
+        return Promise.resolve({
+          email: 'bb@cc.dd', password: 'p4ssw04d!', name: 'name',
+        } as User);
+      });
+
+      const output = await authService.register({
+        email: 'bb@cc.dd',
+        password: 'p4ssw04d!',
+        name: 'name',
+      });
+
+      expect(output).toEqual({
+        email: 'bb@cc.dd',
         name: 'name',
       });
     });

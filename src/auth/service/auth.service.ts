@@ -54,6 +54,7 @@ export class AuthService {
     }
   }
 
+  //it is public for test purposes only
   public async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<boolean> {
     return await bcrypt.compare(
       plainTextPassword,
