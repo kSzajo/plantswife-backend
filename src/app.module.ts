@@ -7,16 +7,19 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
+      url: process.env.DATABASE_URL,
       type: 'postgres',
       host: 'localhost',
-      port: 3306,
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
+      port: Number(process.env.DATABASE_PORT),
+      username: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
       dropSchema: process.env.CREATE_TABLES === 'true',
+      // dropSchema: true,
       database: 'Plantswife',
       autoLoadEntities: true,
       // entities: [Plant],
-      synchronize: process.env.CREATE_TABLES === 'true' || false,
+      // synchronize: true,
+      synchronize: process.env.CREATE_TABLES === 'true',
       // logging: 'all',
     }),
     PlantsModule,
