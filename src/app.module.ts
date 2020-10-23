@@ -7,11 +7,11 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: 'localhost',
       port: 3306,
-      username: 'root',
-      password: 'qwe123zxcasd',
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
       dropSchema: process.env.CREATE_TABLES === 'true',
       database: 'Plantswife',
       autoLoadEntities: true,
