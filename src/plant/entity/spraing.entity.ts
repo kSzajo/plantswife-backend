@@ -7,7 +7,7 @@ export class Spraing {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({type: 'datetime'})
+  @Column({ type: 'date' })
   date: Date
 
   @ManyToOne(() => Plant, plant => plant.spraing, { onDelete: 'CASCADE' })

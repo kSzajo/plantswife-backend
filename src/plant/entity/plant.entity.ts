@@ -29,13 +29,13 @@ export class Plant {
   @OneToMany(() => Feeding, feeding => feeding.plant, { cascade: true })
   feeding: Feeding[];
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextSpraing: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextFeeding: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextWatering: Date;
 
   @Column({
