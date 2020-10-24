@@ -68,27 +68,27 @@ export class PlantsService {
     }
 
     const allUserPlants = await this.plantRepository.createQueryBuilder('plant')
-      .where('plant.userId = :id', { id: user.id })
+      .where('"plant"."userId" = :id', { id: user.id })
       .leftJoinAndSelect(
         qb =>
           qb.from(Watering, 'watering')
             .select('MAX(date)', 'wateringDate')
-            .addSelect('plantId', 'wateringPlantId')
-            .groupBy('wateringPlantId'), 'mostRecent', 'wateringPlantId = plant.id',
+            .addSelect('"plantId"', 'wateringPlantId')
+            .groupBy('"wateringPlantId"'), 'mostRecentWatering', '"mostRecentWatering"."wateringPlantId"="plant"."id"',
       )
       .leftJoinAndSelect(
         qb =>
           qb.from(Spraing, 'spraing')
             .select('MAX(date)', 'spraingDate')
-            .addSelect('plantId', 'spraingPlantId')
-            .groupBy('spraingPlantId'), 'mostRecentSpraing', 'spraingPlantId = plant.id',
+            .addSelect('"plantId"', 'spraingPlantId')
+            .groupBy('"spraingPlantId"'), 'mostRecentSpraing', '"mostRecentSpraing"."spraingPlantId"="plant"."id"',
       )
       .leftJoinAndSelect(
         qb =>
           qb.from(Spraing, 'feeding')
             .select('MAX(date)', 'feedingDate')
-            .addSelect('plantId', 'feedingPlantId')
-            .groupBy('feedingPlantId'), 'mostRecentFeeding', 'feedingPlantId = plant.id',
+            .addSelect('"plantId"', 'feedingPlantId')
+            .groupBy('"feedingPlantId"'), 'mostRecentFeeding', '"mostRecentFeeding"."feedingPlantId"="plant"."id"',
       )
       .getRawMany();
 
