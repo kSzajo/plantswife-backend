@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Spraing } from './spraing.entity';
 import { Watering } from './watering.entity';
 import { Feeding } from './feeding.entity';
 import { ProcessInterval } from '../dto/processInterval.enum';
+import { User } from '../../users/entity/user.entity';
 
 @Entity()
 export class Plant {
@@ -28,13 +29,13 @@ export class Plant {
   @OneToMany(() => Feeding, feeding => feeding.plant, { cascade: true })
   feeding: Feeding[];
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextSpraing: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextFeeding: Date;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   nextWatering: Date;
 
   @Column({
@@ -58,6 +59,9 @@ export class Plant {
   })
   wateringInterval: ProcessInterval;
 
+  @ManyToOne(() => User, user => user.plant)
+  @JoinColumn()
+  user: User;
 }
 
 

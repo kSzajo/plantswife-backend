@@ -4,9 +4,9 @@ import { Plant } from './entity/plant.entity';
 import { Spraing } from './entity/spraing.entity';
 import { Feeding } from './entity/feeding.entity';
 import { Watering } from './entity/watering.entity';
-import { PlantProcessService } from './service/plantProcess.service';
+import { PlantProcessService } from './service/plant-process.service';
 import { PlantsService } from './service/plants.service';
-import { PlantProcessController } from './controller/plantProcess.controller';
+import { PlantProcessController } from './controller/plant-process.controller';
 import { PlantsController } from './controller/plants.controller';
 
 @Module({
@@ -16,6 +16,7 @@ import { PlantsController } from './controller/plants.controller';
     Spraing,
     Watering,
   ]),
+    // PassportModule.register({defaultStrategy: 'jwt'})
   ],
   providers: [
     PlantsService,
