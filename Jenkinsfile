@@ -23,7 +23,7 @@ pipeline {
     stage('run') {
       steps {
         sh 'HOME=/home/acetylen pm2 ps'
-        sh 'HOME=/home/acetylen PORT=3069 pm2 start /home/acetylen/plantswife/production/backend/dist/main.js --name plantswife-backend'
+        sh 'HOME=/home/acetylen DATABASE_USERNAME=toshiba DATABASE_PASSWORD=qwe123 DATABASE_PORT=5432 pm2 start /home/acetylen/plantswife/production/backend/dist/main.js --name plantswife-backend'
       }
     }
 
