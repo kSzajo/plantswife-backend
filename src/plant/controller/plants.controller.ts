@@ -21,6 +21,8 @@ import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { IdentityGuard } from '../guard/identity.guard';
 import { User as UserEntity } from '../../users/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { destinationPath, editFileName, imageFileFilter } from '../../image/image/image-util';
 
 export const User = createParamDecorator((data, req: ExecutionContext) => {
   const request = req.switchToHttp().getRequest();
@@ -66,9 +68,15 @@ export class PlantsController {
 
   @Post(':id/image')
   @UseGuards(JwtAuthGuard, IdentityGuard)
-  @UseInterceptors(FileInterceptor('image'))
-  async uploadPlantImage(@UploadedFile() file) {
-    console.log(file);
+  @UseInterceptors(FileInterceptor('image', {
+    storage: diskStorage({
+      destination: destinationPath,
+      filename: editFileName,
+    }),
+    fileFilter: imageFileFilter,
+  }))
+  async uploadPlantImage(@UploadedFile() file: Express.Multer.File, @User() user: { email: string, name: string, id: number }) {
+    return 'success';
   }
 
 }
