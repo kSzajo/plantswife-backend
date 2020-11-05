@@ -4,10 +4,14 @@ import { PlantsModule } from './plant/plants.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    MulterModule.register({
+      dest: './uploads',
+    }),
     TypeOrmModule.forRoot({
       url: process.env.DATABASE_URL,
       type: 'postgres',

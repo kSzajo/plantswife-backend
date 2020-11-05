@@ -9,7 +9,9 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
@@ -18,6 +20,7 @@ import { PlantsService } from '../service/plants.service';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { IdentityGuard } from '../guard/identity.guard';
 import { User as UserEntity } from '../../users/entity/user.entity';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 export const User = createParamDecorator((data, req: ExecutionContext) => {
   const request = req.switchToHttp().getRequest();
@@ -59,6 +62,13 @@ export class PlantsController {
   @UseGuards(JwtAuthGuard, IdentityGuard)
   delete(@Param('id', ParseIntPipe) id: number): Promise<{ deleted: number }> {
     return this.plantsService.delete(id);
+  }
+
+  @Post(':id/image')
+  @UseGuards(JwtAuthGuard, IdentityGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadPlantImage(@UploadedFile() file) {
+    console.log(file);
   }
 
 }
