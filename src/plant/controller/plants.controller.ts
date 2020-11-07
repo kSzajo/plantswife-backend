@@ -5,15 +5,18 @@ import {
   Delete,
   ExecutionContext,
   Get,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Post,
   Put,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
   ValidationPipe,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { Plant } from '../entity/plant.entity';
 import { PlantDto } from '../dto/plant.dto';
 import { PlantsService } from '../service/plants.service';
@@ -23,6 +26,9 @@ import { User as UserEntity } from '../../users/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { destinationPath, editFileName, imageFileFilter } from '../../image/image/image-util';
+import * as fs from 'fs';
+import * as path from 'path';
+
 
 export const User = createParamDecorator((data, req: ExecutionContext) => {
   const request = req.switchToHttp().getRequest();
@@ -75,7 +81,20 @@ export class PlantsController {
     }),
     fileFilter: imageFileFilter,
   }))
-  async uploadPlantImage(@UploadedFile() file: Express.Multer.File, @User() user: { email: string, name: string, id: number }) {
+  async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: { email: string, name: string, id: number }, @Param('id', ParseIntPipe) plantId: number): Promise<string> {
+    const imagePath = `image/${user.id}/`;
+    fs.readdir(imagePath, (err, files) => {
+      if (err) {
+        console.error(err);
+      }
+      files.forEach(file => {
+        const fileDir = path.join(imagePath, file);
+        if (file !== uploadedImage.filename && file.includes(`plant-${plantId}`)) {
+          fs.unlinkSync(fileDir);
+        }
+      });
+
+    });
     return 'success';
   }
 
