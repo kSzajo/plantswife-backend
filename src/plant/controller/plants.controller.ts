@@ -98,5 +98,19 @@ export class PlantsController {
     return 'success';
   }
 
+  @Get(':id/image')
+  @UseGuards(JwtAuthGuard, IdentityGuard)
+  getImage(@User() user: { email: string, name: string, id: number }, @Res() response: Response, @Param('id', ParseIntPipe) plantId: number): void {
+    // todo add image service
+    const imagePath = `image/${user.id}/`;
+    const filesAv: string[] = fs.readdirSync(imagePath);
+    const foundfile = filesAv.find(value => value.includes(`plant-${plantId}`));
+    if (foundfile) {
+      response.sendFile(foundfile, { root: imagePath });
+    } else {
+      throw new NotFoundException(`Image for plantid:${plantId} not found for user ${user.id}`);
+    }
+  }
+
 }
 
