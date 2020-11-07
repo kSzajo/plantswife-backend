@@ -25,9 +25,9 @@ import { IdentityGuard } from '../guard/identity.guard';
 import { User as UserEntity } from '../../users/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { destinationPath, editFileName, imageFileFilter } from '../../image/image/image-util';
-import * as fs from 'fs';
-import * as path from 'path';
+import { destinationPath, editFileName, imageFileFilter } from '../../image/image-util';
+import { ImageService } from '../../image/image.service';
+import { LoggedUserModel } from '../../users/model/logged-user.model';
 
 
 export const User = createParamDecorator((data, req: ExecutionContext) => {
@@ -38,7 +38,8 @@ export const User = createParamDecorator((data, req: ExecutionContext) => {
 @Controller('plants')
 export class PlantsController {
 
-  constructor(private plantsService: PlantsService) {
+  constructor(private plantsService: PlantsService,
+              private imageService: ImageService) {
   }
 
   @Get()
@@ -81,32 +82,17 @@ export class PlantsController {
     }),
     fileFilter: imageFileFilter,
   }))
-  async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: { email: string, name: string, id: number }, @Param('id', ParseIntPipe) plantId: number): Promise<string> {
-    const imagePath = `image/${user.id}/`;
-    fs.readdir(imagePath, (err, files) => {
-      if (err) {
-        console.error(err);
-      }
-      files.forEach(file => {
-        const fileDir = path.join(imagePath, file);
-        if (file !== uploadedImage.filename && file.includes(`plant-${plantId}`)) {
-          fs.unlinkSync(fileDir);
-        }
-      });
-
-    });
+  async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: LoggedUserModel, @Param('id', ParseIntPipe) plantId: number): Promise<string> {
+    this.imageService.cleanUsersImageDirectory(user, plantId, uploadedImage.filename);
     return 'success';
   }
 
   @Get(':id/image')
   @UseGuards(JwtAuthGuard, IdentityGuard)
   getImage(@User() user: { email: string, name: string, id: number }, @Res() response: Response, @Param('id', ParseIntPipe) plantId: number): void {
-    // todo add image service
-    const imagePath = `image/${user.id}/`;
-    const filesAv: string[] = fs.readdirSync(imagePath);
-    const foundfile = filesAv.find(value => value.includes(`plant-${plantId}`));
-    if (foundfile) {
-      response.sendFile(foundfile, { root: imagePath });
+    const foundImage = this.imageService.getUserImagePlant(user, plantId);
+    if (foundImage) {
+      response.sendFile(foundImage.filename, { root: foundImage.rootPath });
     } else {
       throw new NotFoundException(`Image for plantid:${plantId} not found for user ${user.id}`);
     }

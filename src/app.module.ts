@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
+import { ImageModule } from './image/image.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MulterModule } from '@nestjs/platform-express';
     PlantsModule,
     AuthModule,
     UsersModule,
+    ImageModule,
   ],
 })
 export class AppModule {}
