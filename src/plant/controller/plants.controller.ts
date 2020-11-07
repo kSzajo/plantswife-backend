@@ -25,7 +25,7 @@ import { IdentityGuard } from '../guard/identity.guard';
 import { User as UserEntity } from '../../users/entity/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { destinationPath, editFileName, imageFileFilter } from '../../image/image-util';
+import ImageUtil from '../../image/image-util';
 import { ImageService } from '../../image/image.service';
 import { LoggedUserModel } from '../../users/model/logged-user.model';
 
@@ -77,10 +77,10 @@ export class PlantsController {
   @UseGuards(JwtAuthGuard, IdentityGuard)
   @UseInterceptors(FileInterceptor('image', {
     storage: diskStorage({
-      destination: destinationPath,
-      filename: editFileName,
+      destination: ImageUtil.destinationPath,
+      filename: ImageUtil.editFileName,
     }),
-    fileFilter: imageFileFilter,
+    fileFilter: ImageUtil.imageFileFilter,
   }))
   async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: LoggedUserModel, @Param('id', ParseIntPipe) plantId: number): Promise<string> {
     this.imageService.cleanUsersImageDirectory(user, plantId, uploadedImage.filename);
