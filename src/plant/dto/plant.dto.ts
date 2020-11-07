@@ -30,9 +30,11 @@ export class PlantDto {
   @Type(() => PlantProcess)
   @IsDefined()
   feeding: PlantProcess;
-  imageUrl?: string;
 }
 
+export class PlantResponseDto extends PlantDto {
+  imageUrl?: string;
+}
 
 
 

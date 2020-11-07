@@ -1,4 +1,4 @@
-import { PlantDto } from './plant.dto';
+import { PlantDto, PlantResponseDto } from './plant.dto';
 import { Plant } from '../entity/plant.entity';
 import * as _ from 'lodash';
 import { Watering } from '../entity/watering.entity';
@@ -23,7 +23,7 @@ export class PlantMapper {
   }
 
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public fromQueryResultToDTO(plant: any, userId: number): PlantDto {
+  public fromQueryResultToDTO(plant: any, userId: number): PlantResponseDto {
     const foundImage = this.imageService.getUserImagePlant({ id: userId } as LoggedUserModel, plant.id);
     const result = {
       id: plant.id,

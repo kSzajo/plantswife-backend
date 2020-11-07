@@ -18,7 +18,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Plant } from '../entity/plant.entity';
-import { PlantDto } from '../dto/plant.dto';
+import { PlantDto, PlantResponseDto } from '../dto/plant.dto';
 import { PlantsService } from '../service/plants.service';
 import { JwtAuthGuard } from '../../auth/strategy/jwt-auth.guard';
 import { IdentityGuard } from '../guard/identity.guard';
@@ -44,13 +44,13 @@ export class PlantsController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  findAll(@User() user: UserEntity): Promise<PlantDto[]> {
+  findAll(@User() user: UserEntity): Promise<PlantResponseDto[]> {
     return this.plantsService.findAll(user);
   }
 
   @Get(':id')
   @UseGuards(JwtAuthGuard, IdentityGuard)
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<PlantDto> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<PlantResponseDto> {
     return this.plantsService.findOne(id);
   }
 

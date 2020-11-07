@@ -18,8 +18,8 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  // remove @user decorator because swagger is not parsing it, replace with @body
-  async login(@User() user: LoginUserDto) {
+  // this is duplicated to help swagger parse
+  async login(@Body() user2: LoginUserDto, @User() user: LoginUserDto) {
     return this.authService.login(user);
   }
 
