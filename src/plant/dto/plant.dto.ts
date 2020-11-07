@@ -30,6 +30,7 @@ export class PlantDto {
   @Type(() => PlantProcess)
   @IsDefined()
   feeding: PlantProcess;
+  imageUrl?: string;
 }
 
 

@@ -25,14 +25,16 @@ export class ImageService {
 
   getUserImagePlant(user: LoggedUserModel, plantId: number): { filename: string, rootPath: string } | undefined {
     const imagePath = userImageDirectoryPath(user.id.toString());
-    const filesAv: string[] = fs.readdirSync(imagePath);
-    const foundFile = filesAv.find(value => value.includes(`plant-${plantId}`));
-
-    if (!!foundFile && imagePath) {
-      return {
-        filename: foundFile,
-        rootPath: imagePath,
-      };
+    try {
+      const filesAv: string[] = fs.readdirSync(imagePath);
+      const foundFile = filesAv.find(value => value.includes(`plant-${plantId}`));
+      if (!!foundFile && imagePath) {
+        return {
+          filename: foundFile,
+          rootPath: imagePath,
+        };
+      }
+    } catch (e) {
     }
 
   }

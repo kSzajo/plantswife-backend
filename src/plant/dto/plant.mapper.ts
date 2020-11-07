@@ -5,6 +5,9 @@ import { Watering } from '../entity/watering.entity';
 import { Spraing } from '../entity/spraing.entity';
 import { Feeding } from '../entity/feeding.entity';
 import { plainToClass } from 'class-transformer';
+import { Injectable } from '@nestjs/common';
+import { ImageService } from '../../image/image.service';
+import { LoggedUserModel } from '../../users/model/logged-user.model';
 
 export class DestructuredPlantDTO {
   plant?: Partial<Plant>;
@@ -13,11 +16,16 @@ export class DestructuredPlantDTO {
   feeding?: Partial<Feeding>;
 }
 
+@Injectable()
 export class PlantMapper {
 
+  constructor(private imageService: ImageService) {
+  }
+
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  public static fromQueryResultToDTO(plant: any): PlantDto {
-    return {
+  public fromQueryResultToDTO(plant: any, userId: number): PlantDto {
+    const foundImage = this.imageService.getUserImagePlant({ id: userId } as LoggedUserModel, plant.id);
+    const result = {
       id: plant.id,
       name: plant.name,
       notes: plant.notes,
@@ -38,9 +46,19 @@ export class PlantMapper {
         nextTimeProcessed: plant.nextFeeding,
       },
     } as PlantDto;
+
+    if (foundImage) {
+      return {
+        ...result,
+        //  this is a path to controller, shouldnt be hardcoded
+        imageUrl: `plants/${plant.id}/image`,
+      };
+    } else {
+      return result;
+    }
   }
 
-  public static fromDTOToEntities(id: number, plantDto: Partial<PlantDto>): DestructuredPlantDTO {
+  public fromDTOToEntities(id: number, plantDto: Partial<PlantDto>): DestructuredPlantDTO {
     // todo create util to handle stripping of undefined fields
     //     also strippingEmptyArrays const plantWithoutEmptyArrays = _.omitBy(plantWithoutUndefinedFileds, _.isEmpty)
 
@@ -91,7 +109,7 @@ export class PlantMapper {
     } as DestructuredPlantDTO, _.identity);
   }
 
-  public static fromDTOToEntity(plantDto: PlantDto): Partial<Plant> {
+  public fromDTOToEntity(plantDto: PlantDto): Partial<Plant> {
     // where should we assert that plantDto is not malformed?
     return {
       name: plantDto.name,

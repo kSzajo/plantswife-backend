@@ -10,6 +10,7 @@ import { PlantProcessController } from './controller/plant-process.controller';
 import { PlantsController } from './controller/plants.controller';
 import { ImageModule } from '../image/image.module';
 import { ImageService } from '../image/image.service';
+import { PlantMapper } from './dto/plant.mapper';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -22,6 +23,7 @@ import { ImageService } from '../image/image.service';
     // PassportModule.register({defaultStrategy: 'jwt'})
   ],
   providers: [
+    PlantMapper,
     ImageService,
     PlantsService,
     PlantProcessService,
