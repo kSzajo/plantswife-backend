@@ -10,9 +10,7 @@ import { ImageModule } from './image/image.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MulterModule.register({
-      dest: './uploads',
-    }),
+    MulterModule.register(),
     TypeOrmModule.forRoot({
       url: process.env.DATABASE_URL,
       type: 'postgres',
