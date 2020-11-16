@@ -32,6 +32,9 @@ export class PlantDto {
   feeding: PlantProcess;
 }
 
+export class PlantResponseDto extends PlantDto {
+  imageUrl?: string;
+}
 
 
 

@@ -16,11 +16,12 @@ export class PlantsService {
               @InjectRepository(Watering) private wateringRepository: Repository<Watering>,
               @InjectRepository(Spraing) private spraingRepository: Repository<Spraing>,
               @InjectRepository(Feeding) private feedingRepository: Repository<Feeding>,
+              private plantMapper: PlantMapper,
               private connection: Connection) {
   }
 
   async update(plantId: number, plantDto: PlantDto): Promise<any> {
-    const destructuredPlantDTO: DestructuredPlantDTO = PlantMapper.fromDTOToEntities(plantId, plantDto);
+    const destructuredPlantDTO: DestructuredPlantDTO = this.plantMapper.fromDTOToEntities(plantId, plantDto);
 
     const plantToUpdate: Partial<Plant> = destructuredPlantDTO.plant;
     const wateringUpdate: Partial<Watering> = destructuredPlantDTO.watering;
@@ -55,7 +56,7 @@ export class PlantsService {
 
   create(plantDto: PlantDto, user: User): Promise<Plant> {
     const toSave = {
-      ...PlantMapper.fromDTOToEntity(plantDto),
+      ...this.plantMapper.fromDTOToEntity(plantDto),
       user: user,
     };
     return this.plantRepository.save(toSave);
@@ -105,11 +106,11 @@ export class PlantsService {
       return withRemovedLowerDash;
     };
 
-    return allUserPlants.map(record => PlantMapper.fromQueryResultToDTO(removeLowerDashFromKeys(record)));
+    return allUserPlants.map(record => this.plantMapper.fromQueryResultToDTO(removeLowerDashFromKeys(record), userId));
   }
 
-  async findOne(id: number): Promise<PlantDto> {
-    const foundPlant = await this.plantRepository.findOne({ id });
+  async findOne(plantId: number): Promise<PlantDto> {
+    const foundPlant = await this.plantRepository.findOne({ id: plantId }, { relations: ['user'] });
 
     const getByLatestDate: FindManyOptions<Watering | Spraing | Feeding> = {
       select: ['date'],
@@ -133,7 +134,7 @@ export class PlantsService {
       wateringDate: latestWatering[0]['date'],
     };
 
-    return PlantMapper.fromQueryResultToDTO(result);
+    return this.plantMapper.fromQueryResultToDTO(result, +foundPlant.user.id);
 
   }
 

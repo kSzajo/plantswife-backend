@@ -18,7 +18,8 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('auth/login')
-  async login(@User() user: LoginUserDto) {
+  // this is duplicated to help swagger parse
+  async login(@Body() user2: LoginUserDto, @User() user: LoginUserDto) {
     return this.authService.login(user);
   }
 
