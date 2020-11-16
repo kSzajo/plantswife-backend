@@ -1,5 +1,6 @@
 import { extname } from 'path';
 import * as fs from 'fs';
+import { BadRequestException } from '@nestjs/common';
 
 export default class ImageUtil {
   static editFileName(req, file: Express.Multer.File, callback): void {
@@ -10,7 +11,7 @@ export default class ImageUtil {
 
   static imageFileFilter(req, file, callback): void {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return callback(new Error('Only image files are allowed!'), false);
+      return callback(new BadRequestException('Only image files are allowed!'), false);
     }
     callback(null, true);
   };
