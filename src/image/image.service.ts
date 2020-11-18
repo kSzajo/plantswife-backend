@@ -33,4 +33,16 @@ export class ImageService {
     }
 
   }
+
+  deleteImage(userId: number, plantId: number) {
+    const imagePath = ImageUtil.userImageDirectoryPath(userId.toString());
+    const files: string[] = fs.readdirSync(imagePath);
+    files.forEach(file => {
+      const fileDir = path.join(imagePath, file);
+      if (file.includes(`plant-${plantId}`)) {
+        fs.unlinkSync(fileDir);
+      }
+    });
+
+  }
 }
