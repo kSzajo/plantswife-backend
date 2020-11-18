@@ -98,5 +98,11 @@ export class PlantsController {
     }
   }
 
+  @Delete(':id/image')
+  @UseGuards(JwtAuthGuard, IdentityGuard)
+  deleteImage(@Param('id', ParseIntPipe) plantId: number, @User() user: UserEntity) {
+    this.imageService.deleteImage(+user.id, plantId);
+  }
+
 }
 

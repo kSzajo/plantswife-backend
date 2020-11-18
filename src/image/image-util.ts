@@ -17,7 +17,7 @@ export default class ImageUtil {
   };
 
   static destinationPath(req, file, callback): void {
-    const filepath = this.userImageDirectoryPath(req.user.id);
+    const filepath = ImageUtil.userImageDirectoryPath(req.user.id);
     if (!fs.existsSync(filepath)) {
       fs.mkdirSync(filepath, { recursive: true });
     }
