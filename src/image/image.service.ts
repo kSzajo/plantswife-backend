@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import * as path from 'path';
 import * as fs from 'fs';
 import { LoggedUserModel } from '../users/model/logged-user.model';
@@ -37,12 +37,19 @@ export class ImageService {
   deleteImage(userId: number, plantId: number) {
     const imagePath = ImageUtil.userImageDirectoryPath(userId.toString());
     const files: string[] = fs.readdirSync(imagePath);
+    let foundPlant = false;
+
     files.forEach(file => {
       const fileDir = path.join(imagePath, file);
       if (file.includes(`plant-${plantId}`)) {
+        foundPlant = true;
         fs.unlinkSync(fileDir);
       }
     });
+
+    if (foundPlant == false) {
+      throw new NotFoundException(`Image not found for plant: ${plantId}`);
+    }
 
   }
 }
