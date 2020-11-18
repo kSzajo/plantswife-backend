@@ -33,6 +33,7 @@ export class PlantDto {
 }
 
 export class PlantResponseDto extends PlantDto {
+  id: number;
   imageUrl?: string;
 }
 

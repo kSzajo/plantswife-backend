@@ -45,14 +45,14 @@ export class PlantMapper {
         lastTimeProcessed: plant.feedingDate,
         nextTimeProcessed: plant.nextFeeding,
       },
-    } as PlantDto;
+    } as PlantResponseDto;
 
     if (foundImage) {
       return {
         ...result,
         //  this is a path to controller, shouldnt be hardcoded
         imageUrl: `plants/${plant.id}/image`,
-      };
+      } as PlantResponseDto;
     } else {
       return result;
     }
@@ -116,7 +116,7 @@ export class PlantMapper {
       notes: plantDto.notes,
       place: plantDto.place,
 
-      spraing: [{ date: plantDto.spraing.lastTimeProcessed }] as Spraing[],
+      spraing: [{ date: new Date(Date.parse('' + plantDto.spraing.lastTimeProcessed)) }] as Spraing[],
       watering: [{ date: plantDto.watering.lastTimeProcessed }] as Watering[],
       feeding: [{ date: plantDto.feeding.lastTimeProcessed }] as Feeding[],
 

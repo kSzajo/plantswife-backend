@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Plant } from '../entity/plant.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Connection, DeleteResult, FindManyOptions, Repository } from 'typeorm';
-import { PlantDto } from '../dto/plant.dto';
+import { PlantDto, PlantResponseDto } from '../dto/plant.dto';
 import { DestructuredPlantDTO, PlantMapper } from '../dto/plant.mapper';
 import { Feeding } from '../entity/feeding.entity';
 import { Watering } from '../entity/watering.entity';
@@ -62,7 +62,7 @@ export class PlantsService {
     return this.plantRepository.save(toSave);
   }
 
-  async findAll(user: User): Promise<any> {
+  async findAll(user: User): Promise<PlantResponseDto[]> {
     const userId = Number(user.id);
     if (Number.isNaN(userId)) {
       throw new BadRequestException('User id is not number!');
@@ -106,10 +106,12 @@ export class PlantsService {
       return withRemovedLowerDash;
     };
 
-    return allUserPlants.map(record => this.plantMapper.fromQueryResultToDTO(removeLowerDashFromKeys(record), userId));
+    return allUserPlants
+      .map(record => this.plantMapper.fromQueryResultToDTO(removeLowerDashFromKeys(record), userId))
+      .sort((a, b) => a.id - b.id);
   }
 
-  async findOne(plantId: number): Promise<PlantDto> {
+  async findOne(plantId: number): Promise<PlantResponseDto> {
     const foundPlant = await this.plantRepository.findOne({ id: plantId }, { relations: ['user'] });
 
     const getByLatestDate: FindManyOptions<Watering | Spraing | Feeding> = {
@@ -135,7 +137,6 @@ export class PlantsService {
     };
 
     return this.plantMapper.fromQueryResultToDTO(result, +foundPlant.user.id);
-
   }
 
   async isPlantOwner(param: { plantId: number; userId: string }): Promise<boolean> {
