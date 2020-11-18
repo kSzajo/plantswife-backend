@@ -9,7 +9,7 @@ export class Watering {
   id: number;
 
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   date: Date
 
   @ManyToOne(() => Plant, plant => plant.watering, { onDelete: 'CASCADE' })

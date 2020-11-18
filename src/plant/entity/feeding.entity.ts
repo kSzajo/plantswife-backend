@@ -8,7 +8,7 @@ export class Feeding {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   date: Date
 
   @ManyToOne(() => Plant, plant => plant.feeding, { onDelete: 'CASCADE' })
