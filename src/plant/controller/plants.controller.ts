@@ -82,9 +82,12 @@ export class PlantsController {
     }),
     fileFilter: ImageUtil.imageFileFilter,
   }))
-  async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: LoggedUserModel, @Param('id', ParseIntPipe) plantId: number): Promise<string> {
+  async uploadPlantImage(@UploadedFile() uploadedImage: Express.Multer.File, @User() user: LoggedUserModel, @Param('id', ParseIntPipe) plantId: number): Promise<{ imageUrl: string }> {
     this.imageService.cleanUsersImageDirectory(user, plantId, uploadedImage.filename);
-    return 'success';
+    const foundImage = this.imageService.getUserImagePlant(user, plantId);
+    if (foundImage) {
+      return { imageUrl: `plants/${plantId}/image` };
+    }
   }
 
   @Get(':id/image')
@@ -100,7 +103,7 @@ export class PlantsController {
 
   @Delete(':id/image')
   @UseGuards(JwtAuthGuard, IdentityGuard)
-  deleteImage(@Param('id', ParseIntPipe) plantId: number, @User() user: UserEntity) {
+  deleteImage(@Param('id', ParseIntPipe) plantId: number, @User() user: UserEntity): void {
     this.imageService.deleteImage(+user.id, plantId);
   }
 
