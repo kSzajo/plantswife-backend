@@ -12,19 +12,18 @@ import { ImageModule } from './image/image.module';
     ConfigModule.forRoot(),
     MulterModule.register(),
     TypeOrmModule.forRoot({
-      url: process.env.DATABASE_URL,
+      host: process.env.PLANTS_DATABASE_HOST,
+      username: process.env.PLANTS_DATABASE_USERNAME,
+      database: process.env.PLANTS_DATABASE_USERNAME,
+      password: process.env.PLANTS_DATABASE_PASSWORD,
       type: 'postgres',
-      host: 'localhost',
-      port: Number(process.env.DATABASE_PORT),
-      username: process.env.DATABASE_USERNAME,
-      password: process.env.DATABASE_PASSWORD,
       dropSchema: process.env.CREATE_TABLES === 'true',
       // dropSchema: true,
-      database: 'Plantswife',
       autoLoadEntities: true,
       // entities: [Plant],
       // synchronize: true,
       synchronize: process.env.CREATE_TABLES === 'true',
+      // ssl: { rejectUnauthorized: false },
       // logging: 'all',
     }),
     PlantsModule,
@@ -33,4 +32,5 @@ import { ImageModule } from './image/image.module';
     ImageModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+}

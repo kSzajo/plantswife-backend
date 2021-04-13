@@ -4,7 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
+  app.enableCors({ origin: 'https://plantswife.herokuapp.com', allowedHeaders: '*' });
   const options = new DocumentBuilder()
     .setTitle('Plantswife backend')
     .setDescription('You need to register and login to access plant endpoints')

@@ -8,15 +8,16 @@ $ npm install
 ```
 
 ## Running the app
+To run it on mydevil need to create app.js in public_nodejs
+with content like:
+const aaa = require("./main.js");
 
 You need to add `.env` file in source folder
-DATABASE_USERNAME=user
-DATABASE_PASSWORD=password 
-DATABASE_PORT=port
+PLANTS_DATABASE_USERNAME (also used as db name)
+PLANTS_DATABASE_PASSWORD
 additionally you may want to create required schema in db, then just put env var:
 CREATE_TABLES=true
 rest of env vars:
-PORT=port
 
 
 ```bash
